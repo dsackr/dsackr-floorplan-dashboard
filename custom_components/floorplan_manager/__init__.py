@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 from homeassistant.components import frontend
@@ -15,14 +16,31 @@ from .panel import async_register_panel
 from .storage import FloorplanStore
 from .websocket import async_register_websocket_commands
 
+_LOGGER = logging.getLogger(__name__)
+
+
+def _register_extra_url(hass: HomeAssistant, url: str) -> None:
+    register = getattr(frontend, "async_register_extra_js_url", None)
+    if register is None:
+        register = getattr(frontend, "async_register_extra_module_url", None)
+
+    if register is None:
+        _LOGGER.warning(
+            "Home Assistant frontend does not support registering extra URLs for %s",
+            url,
+        )
+        return
+
+    register(hass, url)
+
 
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     hass.data.setdefault(DOMAIN, {})
 
     async_register_view(hass)
 
-    frontend.async_register_extra_js_url(hass, PANEL_MODULE_URL)
-    frontend.async_register_extra_js_url(hass, CARD_MODULE_URL)
+    _register_extra_url(hass, PANEL_MODULE_URL)
+    _register_extra_url(hass, CARD_MODULE_URL)
     return True
 
 
