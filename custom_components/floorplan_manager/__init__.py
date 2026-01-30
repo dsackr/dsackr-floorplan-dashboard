@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from homeassistant.components import frontend
+from homeassistant.components.http import StaticPath
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
@@ -19,7 +20,9 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     hass.data.setdefault(DOMAIN, {})
 
     www_dir = Path(__file__).parent / "www"
-    hass.http.register_static_path("/floorplan_manager", str(www_dir), cache_headers=False)
+    hass.http.async_register_static_paths(
+        [StaticPath("/floorplan_manager", str(www_dir), cache_headers=False)]
+    )
 
     async_register_view(hass)
 
