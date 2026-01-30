@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from homeassistant.components import frontend
-from homeassistant.components.http import StaticPath
+from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
@@ -19,11 +19,6 @@ from .websocket import async_register_websocket_commands
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     hass.data.setdefault(DOMAIN, {})
 
-    www_dir = Path(__file__).parent / "www"
-    hass.http.async_register_static_paths(
-        [StaticPath("/floorplan_manager", str(www_dir), cache_headers=False)]
-    )
-
     async_register_view(hass)
 
     frontend.async_register_extra_js_url(hass, PANEL_MODULE_URL)
@@ -32,6 +27,17 @@ async def async_setup(hass: HomeAssistant, config: dict) -> bool:
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
+    if not hass.data[DOMAIN].get("static_paths_registered"):
+        static_dir_path = Path(__file__).parent / "www"
+        await hass.http.async_register_static_paths(
+            [
+                StaticPathConfig(
+                    "/api/floorplan_manager/static", str(static_dir_path), True
+                )
+            ]
+        )
+        hass.data[DOMAIN]["static_paths_registered"] = True
+
     store = FloorplanStore(hass)
     await store.async_load()
     hass.data[DOMAIN][entry.entry_id] = store
