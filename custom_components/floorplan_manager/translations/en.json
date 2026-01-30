@@ -1,0 +1,14 @@
+{
+  "title": "Floorplan Manager",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Floorplan Manager",
+        "description": "Create the Floorplan Manager integration."
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Only one Floorplan Manager instance is allowed."
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "domain": "floorplan_manager",
+  "name": "Floorplan Manager",
+  "version": "0.1.0",
+  "config_flow": true,
+  "documentation": "https://github.com/example/das-ha-floorplan",
+  "requirements": [],
+  "dependencies": ["frontend", "http"],
+  "codeowners": ["@example"],
+  "iot_class": "local_push"
+}
