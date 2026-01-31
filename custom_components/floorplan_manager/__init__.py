@@ -49,10 +49,13 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         static_dir_path = Path(__file__).parent / "www"
         await hass.http.async_register_static_paths(
             [
-                StaticPathConfig(
-                    "/api/floorplan_manager/static", str(static_dir_path), True
-                )
+                StaticPathConfig("/floorplan_manager", str(static_dir_path), True)
             ]
+        )
+        _LOGGER.debug(
+            "Registered floorplan manager static path: %s -> %s",
+            "/floorplan_manager",
+            static_dir_path,
         )
         hass.data[DOMAIN]["static_paths_registered"] = True
 
