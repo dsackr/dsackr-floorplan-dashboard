@@ -1,4 +1,4 @@
-# Floorplan Manager
+# dsackr Floorplan Dashboard
 
 Home Assistant custom integration + Lovelace card for managing a floorplan image with tappable room areas and entity markers.
 
@@ -10,9 +10,9 @@ Home Assistant custom integration + Lovelace card for managing a floorplan image
 
 ## Installation (HACS)
 1. Add this repository to HACS as a custom repository.
-2. Install **Floorplan Manager** from HACS.
+2. Install **dsackr Floorplan Dashboard** from HACS.
 3. Restart Home Assistant.
-4. Go to **Settings > Devices & Services** and add **Floorplan Manager**.
+4. Go to **Settings > Devices & Services** and add **dsackr Floorplan Dashboard**.
 5. Open the sidebar **Floorplan Setup** panel to configure the image, entities, and areas.
 
 ## Lovelace Card
