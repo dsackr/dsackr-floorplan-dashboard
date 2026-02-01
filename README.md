@@ -16,7 +16,12 @@ Home Assistant custom integration + Lovelace card for managing a floorplan image
 5. Open the sidebar **Floorplan Setup** panel to configure the image, entities, and areas.
 
 ## Lovelace Card
-Add the card as a resource (HACS typically handles this), then use:
+Add the card as a resource (HACS typically handles this). If you need to add it manually, go to **Settings → Dashboards → Resources** and add:
+
+- **URL:** `/hacsfiles/das-ha-floorplan/floorplan-manager.js`
+- **Type:** `module`
+
+Then use:
 
 ```yaml
 type: custom:floorplan-manager
