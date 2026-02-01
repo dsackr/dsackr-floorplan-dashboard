@@ -2,6 +2,7 @@
   "name": "dsackr Floorplan Dashboard",
   "content_in_root": false,
   "render_readme": true,
-  "domains": ["floorplan_manager"],
+  "filename": "floorplan-manager.js",
+  "type": "dashboard",
   "zip_release": false
 }
