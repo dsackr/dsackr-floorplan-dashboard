@@ -44,3 +44,4 @@ class FloorplanManager extends HTMLElement {
 }
 
 customElements.define("floorplan-manager", FloorplanManager);
+
