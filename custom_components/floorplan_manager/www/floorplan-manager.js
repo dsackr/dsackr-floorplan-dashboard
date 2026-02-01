@@ -2,10 +2,25 @@ class FloorplanManager extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
+    this._config = null;
+    this._hass = null;
   }
 
   connectedCallback() {
     this.render();
+  }
+
+  setConfig(config) {
+    this._config = config;
+    this.render();
+  }
+
+  getCardSize() {
+    return 1;
+  }
+
+  set hass(hass) {
+    this._hass = hass;
   }
 
   render() {
