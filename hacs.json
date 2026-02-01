@@ -4,5 +4,6 @@
   "render_readme": true,
   "filename": "floorplan-manager.js",
   "type": "dashboard",
-  "zip_release": false
+  "zip_release": false,
+  "version": "0.0.2"
 }
