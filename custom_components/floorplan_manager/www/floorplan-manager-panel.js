@@ -1,15 +1,21 @@
-import { s as h, i as g, x as c } from "./lit-element-BcYsEg54.js";
-const l = class l extends h {
+import { s as h, i as u, x as l } from "./lit-element-BcYsEg54.js";
+const c = class c extends h {
   constructor() {
-    super(...arguments), this._areas = [], this._search = "";
+    super(...arguments), this._areas = [], this._search = "", this._initialized = !1;
   }
   connectedCallback() {
-    super.connectedCallback(), this._loadConfig(), this._loadAreas();
+    super.connectedCallback(), this._initialize();
+  }
+  updated(i) {
+    super.updated(i), i.has("hass") && this._initialize();
+  }
+  _initialize() {
+    !this.hass || this._initialized || (this._initialized = !0, this._loadConfig(), this._loadAreas());
   }
   async _loadConfig() {
     if (!this.hass) return;
-    const t = await this.hass.callWS({ type: "floorplan_manager/get_config" });
-    this._config = t;
+    const i = await this.hass.callWS({ type: "floorplan_manager/get_config" });
+    this._config = i;
   }
   async _loadAreas() {
     this.hass && (this._areas = await this.hass.callWS({ type: "config/area_registry/list" }));
@@ -23,89 +29,89 @@ const l = class l extends h {
       config: this._config
     });
   }
-  _updateEntity(t, i) {
+  _updateEntity(i, e) {
     var s;
-    const e = { ...((s = this._config) == null ? void 0 : s.entities) || {} }, a = e[t] || {};
-    e[t] = { ...a, ...i }, this._config = { ...this._config, entities: e }, this._debouncedSave();
+    const t = { ...((s = this._config) == null ? void 0 : s.entities) || {} }, a = t[i] || {};
+    t[i] = { ...a, ...e }, this._config = { ...this._config, entities: t }, this._debouncedSave();
   }
-  _updateArea(t, i) {
+  _updateArea(i, e) {
     var s;
-    const e = { ...((s = this._config) == null ? void 0 : s.areas) || {} }, a = e[t] || {};
-    e[t] = { ...a, ...i }, this._config = { ...this._config, areas: e }, this._debouncedSave();
+    const t = { ...((s = this._config) == null ? void 0 : s.areas) || {} }, a = t[i] || {};
+    t[i] = { ...a, ...e }, this._config = { ...this._config, areas: t }, this._debouncedSave();
   }
-  _setImageUrl(t) {
-    this._config = { ...this._config, image_url: t }, this._debouncedSave();
+  _setImageUrl(i) {
+    this._config = { ...this._config, image_url: i }, this._debouncedSave();
   }
-  _handleSearch(t) {
-    this._search = t.target.value;
+  _handleSearch(i) {
+    this._search = i.target.value;
   }
   _filteredEntities() {
-    const t = this._search.toLowerCase();
-    return Object.keys(this.hass.states).filter((e) => e.toLowerCase().includes(t));
+    const i = this._search.toLowerCase();
+    return Object.keys(this.hass.states).filter((t) => t.toLowerCase().includes(i));
   }
-  _handleImageClick(t) {
+  _handleImageClick(i) {
     var r;
     if (!this._placing || !this._config) return;
-    const i = (r = this.shadowRoot) == null ? void 0 : r.querySelector(".image-wrapper");
-    if (!i) return;
-    const e = i.getBoundingClientRect(), a = (t.clientX - e.left) / e.width * 100, s = (t.clientY - e.top) / e.height * 100;
+    const e = (r = this.shadowRoot) == null ? void 0 : r.querySelector(".image-wrapper");
+    if (!e) return;
+    const t = e.getBoundingClientRect(), a = (i.clientX - t.left) / t.width * 100, s = (i.clientY - t.top) / t.height * 100;
     this._placing.type === "entity" ? this._updateEntity(this._placing.id, { x: a, y: s }) : this._placing.type === "area" && this._updateArea(this._placing.id, { x: a, y: s }), this._placing = null;
   }
-  _startDrag(t, i, e) {
-    t.preventDefault(), this._dragging = { type: i, id: e };
+  _startDrag(i, e, t) {
+    i.preventDefault(), this._dragging = { type: e, id: t };
     const a = (r) => this._onDrag(r), s = () => {
       window.removeEventListener("pointermove", a), window.removeEventListener("pointerup", s), this._dragging = null;
     };
     window.addEventListener("pointermove", a), window.addEventListener("pointerup", s);
   }
-  _onDrag(t) {
+  _onDrag(i) {
     var r;
     if (!this._dragging || !this._config) return;
-    const i = (r = this.shadowRoot) == null ? void 0 : r.querySelector(".image-wrapper");
-    if (!i) return;
-    const e = i.getBoundingClientRect(), a = (t.clientX - e.left) / e.width * 100, s = (t.clientY - e.top) / e.height * 100;
+    const e = (r = this.shadowRoot) == null ? void 0 : r.querySelector(".image-wrapper");
+    if (!e) return;
+    const t = e.getBoundingClientRect(), a = (i.clientX - t.left) / t.width * 100, s = (i.clientY - t.top) / t.height * 100;
     this._dragging.type === "entity" ? this._updateEntity(this._dragging.id, { x: a, y: s }) : this._updateArea(this._dragging.id, { x: a, y: s });
   }
-  async _uploadFile(t) {
+  async _uploadFile(i) {
     var r;
-    const i = (r = t.target.files) == null ? void 0 : r[0];
-    if (!i) return;
-    const e = new FormData();
-    e.append("file", i);
+    const e = (r = i.target.files) == null ? void 0 : r[0];
+    if (!e) return;
+    const t = new FormData();
+    t.append("file", e);
     const a = await fetch("/api/floorplan_manager/upload", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${this.hass.auth.data.access_token}`
       },
-      body: e
+      body: t
     });
     if (!a.ok) return;
     const s = await a.json();
     s.image_url && this._setImageUrl(s.image_url);
   }
   _renderEntitiesList() {
-    return this._config ? this._filteredEntities().map((t) => {
+    return this._config ? this._filteredEntities().map((i) => {
       var a, s, r;
-      const i = this.hass.states[t], e = ((s = (a = this._config) == null ? void 0 : a.entities) == null ? void 0 : s[t]) || {};
-      return c`
+      const e = this.hass.states[i], t = ((s = (a = this._config) == null ? void 0 : a.entities) == null ? void 0 : s[i]) || {};
+      return l`
         <div class="row">
           <div>
-            <div>${t}</div>
-            <div class="small">${((r = i == null ? void 0 : i.attributes) == null ? void 0 : r.friendly_name) || ""}</div>
-            <div class="small">x: ${e.x ?? "-"} y: ${e.y ?? "-"}</div>
+            <div>${i}</div>
+            <div class="small">${((r = e == null ? void 0 : e.attributes) == null ? void 0 : r.friendly_name) || ""}</div>
+            <div class="small">x: ${t.x ?? "-"} y: ${t.y ?? "-"}</div>
           </div>
           <div>
             <label class="small">
               <input
                 type="checkbox"
-                .checked=${e.include || !1}
-                @change=${(o) => this._updateEntity(t, {
+                .checked=${t.include || !1}
+                @change=${(o) => this._updateEntity(i, {
         include: o.target.checked
       })}
               />
               include
             </label>
-            <button class="secondary" @click=${() => this._placing = { type: "entity", id: t }}>
+            <button class="secondary" @click=${() => this._placing = { type: "entity", id: i }}>
               Place
             </button>
           </div>
@@ -114,39 +120,39 @@ const l = class l extends h {
     }) : null;
   }
   _renderAreasList() {
-    return this._config ? this._areas.map((t) => {
-      var e, a;
-      const i = ((a = (e = this._config) == null ? void 0 : e.areas) == null ? void 0 : a[t.id]) || {};
-      return c`
+    return this._config ? this._areas.map((i) => {
+      var t, a;
+      const e = ((a = (t = this._config) == null ? void 0 : t.areas) == null ? void 0 : a[i.id]) || {};
+      return l`
         <div class="row">
           <div>
-            <div>${t.name}</div>
-            <div class="small">x: ${i.x ?? "-"} y: ${i.y ?? "-"} r: ${i.r ?? "-"}</div>
+            <div>${i.name}</div>
+            <div class="small">x: ${e.x ?? "-"} y: ${e.y ?? "-"} r: ${e.r ?? "-"}</div>
           </div>
           <div>
             <label class="small">
               <input
                 type="checkbox"
-                .checked=${i.include || !1}
-                @change=${(s) => this._updateArea(t.id, {
+                .checked=${e.include || !1}
+                @change=${(s) => this._updateArea(i.id, {
         include: s.target.checked
       })}
               />
               include
             </label>
-            <button class="secondary" @click=${() => this._placing = { type: "area", id: t.id }}>
+            <button class="secondary" @click=${() => this._placing = { type: "area", id: i.id }}>
               Place center
             </button>
           </div>
         </div>
         <div>
-          <label class="small">Radius (${i.r ?? 8}%)</label>
+          <label class="small">Radius (${e.r ?? 8}%)</label>
           <input
             type="range"
             min="1"
             max="50"
-            .value=${i.r ?? 8}
-            @input=${(s) => this._updateArea(t.id, {
+            .value=${e.r ?? 8}
+            @input=${(s) => this._updateArea(i.id, {
         r: Number(s.target.value)
       })}
           />
@@ -156,9 +162,9 @@ const l = class l extends h {
   }
   render() {
     var a, s, r;
-    if (!this.hass) return c``;
-    const t = ((a = this._config) == null ? void 0 : a.image_url) || "", i = ((s = this._config) == null ? void 0 : s.entities) || {}, e = ((r = this._config) == null ? void 0 : r.areas) || {};
-    return c`
+    if (!this.hass) return l``;
+    const i = ((a = this._config) == null ? void 0 : a.image_url) || "", e = ((s = this._config) == null ? void 0 : s.entities) || {}, t = ((r = this._config) == null ? void 0 : r.areas) || {};
+    return l`
       <div class="layout">
         <div class="section">
           <h2>Entities</h2>
@@ -176,22 +182,22 @@ const l = class l extends h {
             <input
               type="text"
               placeholder="/local/floorplan_manager/your.png"
-              .value=${t}
+              .value=${i}
               @input=${(o) => this._setImageUrl(o.target.value)}
             />
           </div>
           <div class="small">Click "Place" then click on the image to set coordinates.</div>
           <div class="image-wrapper" @click=${this._handleImageClick}>
-            ${t ? c`<img src=${t} alt="Floorplan" />` : c`<div class="small">Upload or enter an image URL.</div>`}
-            ${Object.entries(e).map(
-      ([o, n]) => n.include && typeof n.x == "number" && typeof n.y == "number" && typeof n.r == "number" ? c`<div
+            ${i ? l`<img src=${i} alt="Floorplan" />` : l`<div class="small">Upload or enter an image URL.</div>`}
+            ${Object.entries(t).map(
+      ([o, n]) => n.include && typeof n.x == "number" && typeof n.y == "number" && typeof n.r == "number" ? l`<div
                     class="room"
                     style=${`left:${n.x}%; top:${n.y}%; width:${n.r * 2}%; height:${n.r * 2}%;`}
                     @pointerdown=${(d) => this._startDrag(d, "area", o)}
                   ></div>` : ""
     )}
-            ${Object.entries(i).map(
-      ([o, n]) => n.include && typeof n.x == "number" && typeof n.y == "number" ? c`<div
+            ${Object.entries(e).map(
+      ([o, n]) => n.include && typeof n.x == "number" && typeof n.y == "number" ? l`<div
                     class="marker"
                     style=${`left:${n.x}%; top:${n.y}%;`}
                     title=${o}
@@ -209,14 +215,14 @@ const l = class l extends h {
     `;
   }
 };
-l.properties = {
+c.properties = {
   hass: {},
   _config: { state: !0 },
   _areas: { state: !0 },
   _search: { state: !0 },
   _placing: { state: !0 },
   _dragging: { state: !1 }
-}, l.styles = g`
+}, c.styles = u`
     :host {
       display: block;
       padding: 24px;
@@ -310,5 +316,5 @@ l.properties = {
       width: 100%;
     }
   `;
-let p = l;
+let p = c;
 customElements.define("ha-panel-floorplan_manager", p);

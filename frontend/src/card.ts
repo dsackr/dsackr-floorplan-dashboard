@@ -1,4 +1,5 @@
 import { LitElement, css, html } from "lit";
+import { PropertyValues } from "lit";
 
 interface FloorplanConfig {
   image_url?: string | null;
@@ -14,6 +15,7 @@ class FloorplanManagerCard extends LitElement {
   hass: any;
   config: any;
   _data?: FloorplanConfig;
+  _initialized = false;
 
   static styles = css`
     .card {
@@ -45,6 +47,19 @@ class FloorplanManagerCard extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
+    this._initialize();
+  }
+
+  protected updated(changedProps: PropertyValues<this>): void {
+    super.updated(changedProps);
+    if (changedProps.has("hass")) {
+      this._initialize();
+    }
+  }
+
+  _initialize() {
+    if (!this.hass || this._initialized) return;
+    this._initialized = true;
     this._ensureData();
   }
 

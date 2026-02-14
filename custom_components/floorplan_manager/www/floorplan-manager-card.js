@@ -1,41 +1,50 @@
-import { s, i as r, x as i } from "./lit-element-BcYsEg54.js";
-const a = class a extends s {
-  setConfig(t) {
-    this.config = t;
+import { s as e, i as r, x as a } from "./lit-element-BcYsEg54.js";
+const t = class t extends e {
+  constructor() {
+    super(...arguments), this._initialized = !1;
+  }
+  setConfig(i) {
+    this.config = i;
   }
   getCardSize() {
     return 4;
   }
   connectedCallback() {
-    super.connectedCallback(), this._ensureData();
+    super.connectedCallback(), this._initialize();
+  }
+  updated(i) {
+    super.updated(i), i.has("hass") && this._initialize();
+  }
+  _initialize() {
+    !this.hass || this._initialized || (this._initialized = !0, this._ensureData());
   }
   async _ensureData() {
     if (!this.hass) return;
-    const t = await this.hass.callWS({ type: "floorplan_manager/get_config" });
-    this._data = t;
+    const i = await this.hass.callWS({ type: "floorplan_manager/get_config" });
+    this._data = i;
   }
   _getImageUrl() {
-    var t;
-    return this.config && this.config.image_url ? this.config.image_url : ((t = this._data) == null ? void 0 : t.image_url) || "";
+    var i;
+    return this.config && this.config.image_url ? this.config.image_url : ((i = this._data) == null ? void 0 : i.image_url) || "";
   }
   render() {
-    const t = this._getImageUrl();
-    return i`
+    const i = this._getImageUrl();
+    return a`
       <ha-card>
         <div class="card">
           <div class="image-wrapper">
-            ${t ? i`<img src=${t} alt="Floorplan" />` : i`<div class="empty">Missing image_url.</div>`}
+            ${i ? a`<img src=${i} alt="Floorplan" />` : a`<div class="empty">Missing image_url.</div>`}
           </div>
         </div>
       </ha-card>
     `;
   }
 };
-a.properties = {
+t.properties = {
   hass: {},
   config: {},
   _data: { state: !0 }
-}, a.styles = r`
+}, t.styles = r`
     .card {
       padding: 16px;
     }
@@ -54,8 +63,8 @@ a.properties = {
       font-style: italic;
     }
   `;
-let e = a;
-customElements.define("floorplan-manager", e);
+let s = t;
+customElements.define("floorplan-manager", s);
 window.customCards = window.customCards || [];
 window.customCards.push({
   type: "floorplan-manager",
