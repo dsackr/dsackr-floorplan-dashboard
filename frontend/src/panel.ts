@@ -1,4 +1,5 @@
 import { LitElement, css, html } from "lit";
+import { PropertyValues } from "lit";
 
 interface FloorplanConfig {
   image_url?: string | null;
@@ -23,6 +24,7 @@ class FloorplanManagerPanel extends LitElement {
   _placing?: { type: "entity" | "area"; id: string } | null;
   _dragging?: { type: "entity" | "area"; id: string } | null;
   _saveTimeout?: number;
+  _initialized = false;
 
   static styles = css`
     :host {
@@ -121,6 +123,19 @@ class FloorplanManagerPanel extends LitElement {
 
   connectedCallback(): void {
     super.connectedCallback();
+    this._initialize();
+  }
+
+  protected updated(changedProps: PropertyValues<this>): void {
+    super.updated(changedProps);
+    if (changedProps.has("hass")) {
+      this._initialize();
+    }
+  }
+
+  _initialize() {
+    if (!this.hass || this._initialized) return;
+    this._initialized = true;
     this._loadConfig();
     this._loadAreas();
   }
